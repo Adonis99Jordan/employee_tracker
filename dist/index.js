@@ -1,3 +1,6 @@
 import { showMainMenu } from './lib/menu.js';
-showMainMenu();
+async function main() {
+    showMainMenu();
+}
+main();
 //# sourceMappingURL=index.js.map

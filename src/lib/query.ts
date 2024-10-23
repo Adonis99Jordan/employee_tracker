@@ -1,52 +1,45 @@
 import client from '../config/connection.js';
 
-export async function getAllShops() {
-    const sql = `
-    SELECT
-    shops.id AS shop_id,
-    name AS shop_name,
-    address AS shop_address,
-    users.id AS user_id,
-    CONCAT(users.first_name, ' ', users.last_name) AS user_name,
-    users.email AS user_email,
-    CONCAT (managers.first_name, ' ', managers.last_name) AS
-    manager,
-    wines.id AS wine_id,
-    brand AS wine_name,
-    type AS wine_price
-    FROM shops
-    JOIN users
-    On shops.user_id = users.id
-    LEFT JOIN wines
-    ON shops.id = wines.shop_id
-    LEFT JOIN users AS managers
-    ON users.manager_id = managers.id
-    `;
-
-    const { rows } = await client.query(sql);
-
-    // console.log('get all shop rows', rows);
-
-    return rows
+export async function viewAllDepartments() {
+    const result = client.query('SELECT * FROM departments');
+    return (await result).rows;
 }
 
-export async function getAllUsers() {
-    const sql = `
-    SELECT
-    id,
-    CONCAT(firts_name, ' ',last_name) AS user_name
-    FROM users
-    `;
-
-    const { rows } = await client.query(sql);
-
-    return rows;
+export async function viewAllRoles() {
+    const result = await client.query(`
+    SELECT 
+    roles.id, roles.title, roles.salary, departments.name AS department
+    FROM roles
+    JOIN departments ON roles.department_id = departments.id
+    `);
+    return result.rows;
 }
 
-export async function createShop(user_id: number, name: string, address: string) {
-    const sql = `
-    INSERT INTO shops (name, address, user_id) VALUES ($1, $2, $3)
-    `;
+export async function viewAllEmployees() {
+    const result = await client.query(`
+    SELECT
+    employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(managers.first_name, ' ', 
+    managers.last_name) AS manager
+    FROM employees
+    JOIN roles ON employees.role_id = roles.id
+    JOIN departments ON roles.department_id = departments.id
+    LEFT JOIN employees AS managers ON employees.manager_id = managers.id
+    `);
+    return result.rows;
+}
 
-    await client.query(sql, [name, address, user_id])
+export async function addDepartment(name: string) {
+    await client.query('INSERT INTO departments (name) VALUES ($1)', [name]);
+}
+
+export async function addRole(title: string, salary: number, department_id: number) {
+    await client.query('INSERT INTO roles (title, salary, department_id) VALUES ($1, $2, $3)', [title, salary, department_id]);
+}
+
+export async function addEmployee(first_name: string, last_name: string, role_id: number, manager_id: number | null) {
+    await client.query('INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)', [first_name, last_name, role_id, manager_id]);
+}
+
+export async function updateEmployeeRole(employee_id: number, role_id: number) {
+    await client.query('UPDATE employees SET role_id = $1 WHERE id = $2', [role_id, employee_id]);
 }

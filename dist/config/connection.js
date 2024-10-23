@@ -3,8 +3,8 @@ const { Client } = pg;
 const client = new Client({
     user: 'postgres',
     password: 'pass',
-    database: 'winery_app_db'
+    database: 'employee_tracker_db'
 });
-await client.connect();
+await client.connect().catch(err => console.error('Connection error', err.stack));
 export default client;
 //# sourceMappingURL=connection.js.map

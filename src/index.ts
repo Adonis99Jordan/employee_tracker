@@ -1,6 +1,8 @@
 import { showMainMenu } from './lib/menu.js';
 
-showMainMenu()
+async function main() {
+    showMainMenu();
+}
 
 
-
+main();

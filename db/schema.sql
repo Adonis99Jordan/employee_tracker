@@ -1,37 +1,28 @@
-DROP TABLE IF EXISTS wines;
-DROP TABLE IF EXISTS shops;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS departments;
 
-CREATE TABLE users (
+CREATE TABLE departments (
     id SERIAL PRIMARY KEY,
-    first_name VARCHAR(200) NOT NULL,
-    Last_name VARCHAR(200) NOT NULL,
-    email VARCHAR(250) UNIQUE NOT NULL,
-    manager_id INT,
-    FOREIGN KEY (manager_id) REFERENCES users (id)
+    name VARCHAR(30) UNIQUE NOT NULL
+);
+
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(30) UNIQUE NOT NULL,
+    salary DECIMAL NOT NULL,
+    department_id INTEGER NOT NULL,
+    FOREIGN KEY (department_id) REFERENCES departments (id)
+);
+
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    role_id INTEGER NOT NULL,
+    manager_id INTEGER,
+    FOREIGN KEY (role_id) REFERENCES roles (id),
+    FOREIGN KEY (manager_id) REFERENCES employees (id)
         ON DELETE SET NULL
-);
-
-CREATE TABLE shops (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(200) NOT NULL,
-    address VARCHAR(200) NOT NULL,
-    user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id)
-    ON DELETE CASCADE
-);
-
-CREATE TABLE wines (
-    id SERIAL PRIMARY KEY,
-    brand VARCHAR(250) NOT NULL,
-    type VARCHAR(200) NOT NULL,
-    region VARCHAR(200) NOT NULL,
-    price DECIMAL NOT NULL,
-    shop_id INT NOT NULL,
-    user_id INT NOT NULL,
-    FOREIGN KEY (shop_id) REFERENCES shops (id)
-    ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users (id)
-    ON DELETE CASCADE
 );
 
