@@ -14,6 +14,7 @@ export async function showMainMenu() {
             'Add a role',
             'Add an employee',
             'Update an employee role',
+            'Exit',
         ],
     });
     switch (action) {
@@ -50,7 +51,7 @@ export async function showMainMenu() {
             await addRole(roleTitle, parseFloat(roleSalary), roleDepartmentId);
             console.log(`Added role: ${roleTitle}`);
             break;
-        case 'Added an employee':
+        case 'Add an employee':
             const roles = await viewAllRoles();
             const employees = await viewAllEmployees();
             const { first_name, last_name, role_id, manager_id } = await inquirer.prompt([
@@ -92,6 +93,9 @@ export async function showMainMenu() {
             await updateEmployeeRole(employee_id, new_role_id);
             console.log(`Update employee's role`);
             break;
+        case 'Exit':
+            console.log('Exiting application...');
+            process.exit();
     }
     showMainMenu();
 }
